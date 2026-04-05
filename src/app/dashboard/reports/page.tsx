@@ -79,66 +79,75 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)]">
-      <nav className="border-b border-white/[0.06] px-6 py-4">
+    <div className="min-h-screen dashboard-bg">
+      <nav className="sticky top-0 z-20 backdrop-blur-xl bg-[rgba(10,14,26,0.7)] border-b border-white/5 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-blue-500" />
-            <span className="text-xl font-bold">
-              <span className="text-blue-500">CMMC</span>-Ready
+          <Link href="/dashboard" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-shadow">
+              <Shield className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-base font-bold text-white">
+              CMMC<span className="gradient-text-blue">-Ready</span>
             </span>
           </Link>
-          <Link href="/dashboard" className="text-neutral-400 text-sm hover:text-white transition">
-            Back to Dashboard
+          <Link href="/dashboard" className="text-slate-400 hover:text-white text-sm transition-colors">
+            ← Dashboard
           </Link>
         </div>
       </nav>
 
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-2">Reports</h1>
-          <p className="text-neutral-400">
-            Generate professional, audit-ready compliance reports as PDF documents.
-          </p>
+        {/* Hero header */}
+        <div className="mesh-hero p-7 mb-6">
+          <div className="relative z-10">
+            <div className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 text-slate-300 w-fit mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              PDF Export
+            </div>
+            <h1 className="text-2xl font-bold text-white tracking-tight mb-1">
+              Compliance <span className="gradient-text-amber">Reports</span>
+            </h1>
+            <p className="text-slate-400 text-sm">
+              Generate professional, audit-ready documents for your C3PAO assessment.
+            </p>
+          </div>
         </div>
 
         {reportError && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg p-4 mb-6">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg p-4 mb-6 backdrop-blur-sm">
             {reportError}
           </div>
         )}
 
         <div className="grid md:grid-cols-2 gap-5">
           {REPORT_TYPES.map((report) => (
-            <Card key={report.id} className="group hover:border-blue-500/20 transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                    <report.icon className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <Badge variant={report.badgeVariant}>{report.badge}</Badge>
+            <div key={report.id} className="group glass-card p-6 hover:!border-blue-500/30 hover:-translate-y-0.5 transition-all duration-300">
+              <div className="flex items-start justify-between mb-4">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/5 border border-blue-500/20 flex items-center justify-center group-hover:border-blue-400/40 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.25)] transition-all">
+                  <report.icon className="w-5 h-5 text-blue-400" />
                 </div>
-                <h3 className="font-semibold mb-2">{report.title}</h3>
-                <p className="text-neutral-400 text-sm mb-5 leading-relaxed">
-                  {report.description}
-                </p>
-                <Button
-                  onClick={() => generateReport(report.id)}
-                  disabled={generating !== null}
-                  className="w-full"
-                  variant={generating === report.id ? "secondary" : "default"}
-                >
-                  {generating === report.id ? (
-                    "Generating PDF..."
-                  ) : (
-                    <>
-                      <Download className="w-4 h-4 mr-2" />
-                      Download PDF
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
+                <Badge variant={report.badgeVariant}>{report.badge}</Badge>
+              </div>
+              <h3 className="font-semibold text-white mb-2">{report.title}</h3>
+              <p className="text-slate-400 text-sm mb-5 leading-relaxed">
+                {report.description}
+              </p>
+              <Button
+                onClick={() => generateReport(report.id)}
+                disabled={generating !== null}
+                className="w-full"
+                variant={generating === report.id ? "secondary" : "default"}
+              >
+                {generating === report.id ? (
+                  "Generating PDF..."
+                ) : (
+                  <>
+                    <Download className="w-4 h-4 mr-2" />
+                    Download PDF
+                  </>
+                )}
+              </Button>
+            </div>
           ))}
         </div>
       </div>
