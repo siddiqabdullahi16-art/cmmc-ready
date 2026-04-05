@@ -41,7 +41,7 @@ export function DashboardLayout({
   return (
     <div className="min-h-screen dashboard-bg flex">
       {/* Sidebar */}
-      <aside className="w-64 flex flex-col fixed h-full z-10" style={{ background: "var(--sidebar-bg)", borderRight: "1px solid rgba(99,120,255,0.1)" }}>
+      <aside className="sidebar-lift w-64 flex flex-col fixed h-full z-10">
         {/* Logo */}
         <div className="p-6 pb-4">
           <Link href="/dashboard" className="flex items-center gap-2.5">

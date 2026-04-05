@@ -56,6 +56,43 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* Sidebar — gradient depth, ambient glow, accent edge */
+.sidebar-lift {
+  position: relative;
+  background:
+    linear-gradient(180deg, #101833 0%, #0c1225 45%, #0a0f1e 100%);
+  border-right: 1px solid rgba(148, 163, 217, 0.08);
+  box-shadow:
+    1px 0 0 rgba(255, 255, 255, 0.02) inset,
+    4px 0 24px rgba(0, 0, 0, 0.4);
+}
+
+.sidebar-lift::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 300px 200px at 50% 0%, rgba(59, 130, 246, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 250px 180px at 50% 100%, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+}
+
+.sidebar-lift::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(99, 120, 255, 0.25) 20%, rgba(99, 120, 255, 0.25) 80%, transparent);
+  pointer-events: none;
+}
+
+.sidebar-lift > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* Dashboard background — extra ambient glow contained to the dashboard area */
 .dashboard-bg {
   position: relative;
