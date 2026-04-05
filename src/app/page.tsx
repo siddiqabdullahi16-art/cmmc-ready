@@ -433,7 +433,7 @@ export default function LandingPage() {
             <CardContent className="p-12 text-center">
               <Lock className="w-12 h-12 text-blue-400 mx-auto mb-6" />
               <h2 className="text-3xl font-bold mb-4">
-                Don&apos;t Lose Your DoD Contracts
+                Don&apos;t Lose Your DoD/DoW Contracts
               </h2>
               <p className="text-neutral-400 mb-8 max-w-lg mx-auto">
                 CMMC 2.0 enforcement is here. Every day you wait is a day closer to

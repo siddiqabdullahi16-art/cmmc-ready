@@ -134,7 +134,7 @@ export default function OnboardingPage() {
           <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-8">
             <h2 className="text-xl font-bold mb-2">Select your CMMC target level</h2>
             <p className="text-[var(--muted)] text-sm mb-6">
-              Choose the level required by your DoD contracts.
+              Choose the level required by your DoD/DoW contracts.
             </p>
             <div className="space-y-3 mb-6">
               {LEVELS.map((l) => (
