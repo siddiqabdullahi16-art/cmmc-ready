@@ -72,24 +72,23 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Check if user is already a member (look up by email via admin client)
+  // Check if user is already a member (look up by email via admin SQL)
   const admin = getSupabaseAdmin();
-  const { data: existingUserData } = await admin.auth.admin.getUserByEmail(email);
-  const existingUser = existingUserData?.user ?? null;
+  const { data: existingUsers } = await admin
+    .from("org_members")
+    .select("id, user_id")
+    .eq("org_id", orgId);
 
-  if (existingUser?.id) {
-    const { data: existingMember } = await supabase
-      .from("org_members")
-      .select("id")
-      .eq("org_id", orgId)
-      .eq("user_id", existingUser.id)
-      .maybeSingle();
-
-    if (existingMember) {
-      return NextResponse.json(
-        { error: "This user is already a member of your organization" },
-        { status: 409 }
-      );
+  if (existingUsers && existingUsers.length > 0) {
+    // Check via auth admin for each existing member
+    for (const member of existingUsers) {
+      const { data: userData } = await admin.auth.admin.getUserById(member.user_id);
+      if (userData?.user?.email?.toLowerCase() === email) {
+        return NextResponse.json(
+          { error: "This user is already a member of your organization" },
+          { status: 409 }
+        );
+      }
     }
   }
 
