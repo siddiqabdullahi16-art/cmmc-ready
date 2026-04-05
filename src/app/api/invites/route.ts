@@ -74,12 +74,10 @@ export async function POST(request: NextRequest) {
 
   // Check if user is already a member (look up by email via admin client)
   const admin = getSupabaseAdmin();
-  const { data: existingUsers } = await admin.auth.admin.listUsers();
-  const existingUser = existingUsers?.users?.find(
-    (u) => u.email?.toLowerCase() === email
-  );
+  const { data: existingUserData } = await admin.auth.admin.getUserByEmail(email);
+  const existingUser = existingUserData?.user ?? null;
 
-  if (existingUser) {
+  if (existingUser?.id) {
     const { data: existingMember } = await supabase
       .from("org_members")
       .select("id")

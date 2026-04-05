@@ -25,7 +25,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { reportType } = await request.json();
+  let reportType: string;
+  try {
+    const body = await request.json();
+    reportType = body.reportType;
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
 
   if (!reportType || !["ssp", "poam", "gap", "executive"].includes(reportType)) {
     return NextResponse.json({ error: "Invalid report type" }, { status: 400 });

@@ -41,6 +41,7 @@ export function AssessmentFlow({
   });
   const [responses, setResponses] = useState<ResponseMap>(existingResponses);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [notes, setNotes] = useState(existingResponses[controls[0]?.id]?.notes || "");
 
   const control = controls[currentIndex];
@@ -58,6 +59,7 @@ export function AssessmentFlow({
   const saveResponse = useCallback(
     async (status: string) => {
       setSaving(true);
+      setSaveError("");
       const supabase = createClient();
 
       const { error } = await supabase.from("assessment_responses").upsert(
@@ -71,7 +73,9 @@ export function AssessmentFlow({
         { onConflict: "assessment_id,control_id" }
       );
 
-      if (!error) {
+      if (error) {
+        setSaveError("Failed to save. Please check your connection and try again.");
+      } else {
         setResponses((prev) => ({
           ...prev,
           [control.id]: { status, notes },
@@ -125,6 +129,13 @@ export function AssessmentFlow({
         <p className="text-[var(--foreground)] mb-6">{control.assessment_question}</p>
         <p className="text-[var(--muted)] text-sm">{control.description}</p>
       </div>
+
+      {/* Save Error */}
+      {saveError && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg p-3 mb-4">
+          {saveError}
+        </div>
+      )}
 
       {/* Response Buttons */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">

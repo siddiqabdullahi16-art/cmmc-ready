@@ -59,18 +59,10 @@ export default function TeamPage() {
     setOrgId(membership.org_id);
     setUserRole(membership.role);
 
-    const { data: orgMembers } = await supabase
-      .from("org_members")
-      .select("id, role, user_id")
-      .eq("org_id", membership.org_id);
-
-    if (orgMembers) {
-      setMembers(
-        orgMembers.map((m) => ({
-          ...m,
-          user_email: m.user_id === user.id ? user.email ?? "You" : undefined,
-        }))
-      );
+    const res = await fetch("/api/team/members");
+    if (res.ok) {
+      const data = await res.json();
+      setMembers(data.members ?? []);
     }
 
     await loadInvitations();
@@ -125,6 +117,7 @@ export default function TeamPage() {
   }
 
   const canInvite = userRole === "owner" || userRole === "admin";
+
 
   return (
     <div className="min-h-screen bg-[var(--background)]">

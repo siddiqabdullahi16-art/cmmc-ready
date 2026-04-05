@@ -35,12 +35,13 @@ export default function OnboardingPage() {
 
   async function handleComplete() {
     setLoading(true);
+    try {
     const supabase = createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) return;
+    if (!user) { setLoading(false); return; }
 
     // Check if org already exists for this user
     const { data: existing } = await supabase
@@ -84,6 +85,9 @@ export default function OnboardingPage() {
     }
 
     router.push("/dashboard");
+    } catch {
+      setLoading(false);
+    }
   }
 
   return (

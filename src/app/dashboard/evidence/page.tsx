@@ -23,81 +23,90 @@ export default function EvidencePage() {
   const [selectedControl, setSelectedControl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [uploadError, setUploadError] = useState("");
 
   useEffect(() => {
     loadData();
   }, []);
 
   async function loadData() {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    setLoadError("");
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    // Get controls that have responses
-    const { data: membership } = await supabase
-      .from("org_members")
-      .select("org_id")
-      .eq("user_id", user.id)
-      .single();
+      const { data: membership, error: memberErr } = await supabase
+        .from("org_members")
+        .select("org_id")
+        .eq("user_id", user.id)
+        .single();
 
-    if (!membership) return;
+      if (memberErr || !membership) { setLoading(false); return; }
 
-    const { data: assessment } = await supabase
-      .from("assessments")
-      .select("id")
-      .eq("org_id", membership.org_id)
-      .eq("status", "in_progress")
-      .limit(1)
-      .single();
+      const { data: assessment } = await supabase
+        .from("assessments")
+        .select("id")
+        .eq("org_id", membership.org_id)
+        .eq("status", "in_progress")
+        .limit(1)
+        .single();
 
-    if (!assessment) return;
+      if (!assessment) { setLoading(false); return; }
 
-    const { data: responses } = await supabase
-      .from("assessment_responses")
-      .select("id, control_id, cmmc_controls(title, domain_id)")
-      .eq("assessment_id", assessment.id);
+      const { data: responses } = await supabase
+        .from("assessment_responses")
+        .select("id, control_id, cmmc_controls(title, domain_id)")
+        .eq("assessment_id", assessment.id);
 
-    if (responses) {
-      setControls(
-        responses.map((r) => ({
-          id: r.id,
-          title: (r.cmmc_controls as any)?.title || r.control_id,
-          domain_id: (r.cmmc_controls as any)?.domain_id || "",
-        }))
-      );
+      if (responses) {
+        setControls(
+          responses.map((r) => ({
+            id: r.id,
+            title: (r.cmmc_controls as any)?.title || r.control_id,
+            domain_id: (r.cmmc_controls as any)?.domain_id || "",
+          }))
+        );
+      }
+
+      const { data: evidenceData, error: evErr } = await supabase
+        .from("evidence")
+        .select("*, assessment_responses(control_id, cmmc_controls(title, domain_id))")
+        .order("created_at", { ascending: false });
+
+      if (evErr) throw evErr;
+      if (evidenceData) setEvidence(evidenceData as any);
+    } catch {
+      setLoadError("Failed to load evidence. Please refresh the page.");
+    } finally {
+      setLoading(false);
     }
-
-    const { data: evidenceData } = await supabase
-      .from("evidence")
-      .select("*, assessment_responses(control_id, cmmc_controls(title, domain_id))")
-      .order("created_at", { ascending: false });
-
-    if (evidenceData) setEvidence(evidenceData as any);
-    setLoading(false);
   }
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files?.length || !selectedControl) return;
     setUploading(true);
+    setUploadError("");
 
     const file = e.target.files[0];
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) { setUploading(false); return; }
 
     const filePath = `${user.id}/${Date.now()}-${file.name}`;
 
-    const { error: uploadError } = await supabase.storage
+    const { error: storageError } = await supabase.storage
       .from("evidence")
       .upload(filePath, file);
 
-    if (uploadError) {
-      alert("Upload failed: " + uploadError.message);
+    if (storageError) {
+      setUploadError("Upload failed: " + storageError.message);
       setUploading(false);
       return;
     }
 
-    await supabase.from("evidence").insert({
+    const { error: insertError } = await supabase.from("evidence").insert({
       response_id: selectedControl,
       file_name: file.name,
       file_path: filePath,
@@ -105,6 +114,10 @@ export default function EvidencePage() {
       mime_type: file.type,
       uploaded_by: user.id,
     });
+
+    if (insertError) {
+      setUploadError("File uploaded but failed to save record. Please refresh.");
+    }
 
     setUploading(false);
     loadData();
@@ -131,6 +144,12 @@ export default function EvidencePage() {
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         <h1 className="text-2xl font-bold mb-6">Evidence Tracking</h1>
+
+        {loadError && (
+          <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg p-4 mb-6">
+            {loadError}
+          </div>
+        )}
 
         {/* Upload Section */}
         <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-6 mb-8">
@@ -168,6 +187,9 @@ export default function EvidencePage() {
               />
             </label>
           </div>
+          {uploadError && (
+            <p className="text-red-400 text-xs mt-3">{uploadError}</p>
+          )}
         </div>
 
         {/* Evidence List */}

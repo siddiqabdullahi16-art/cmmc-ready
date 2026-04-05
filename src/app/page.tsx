@@ -416,7 +416,7 @@ export default function LandingPage() {
                     variant={tier.highlighted ? "default" : "secondary"}
                     asChild
                   >
-                    <Link href="/auth/signup">{tier.cta}</Link>
+                    <Link href={tier.cta === "Contact Sales" ? "/contact" : "/auth/signup"}>{tier.cta}</Link>
                   </Button>
                 </CardContent>
               </Card>

@@ -44,9 +44,11 @@ const REPORT_TYPES = [
 
 export default function ReportsPage() {
   const [generating, setGenerating] = useState<string | null>(null);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   async function generateReport(reportType: string) {
     setGenerating(reportType);
+    setReportError(null);
 
     try {
       const response = await fetch("/api/reports", {
@@ -56,7 +58,8 @@ export default function ReportsPage() {
       });
 
       if (!response.ok) {
-        alert("Failed to generate report. Please complete some assessment questions first.");
+        const data = await response.json().catch(() => ({}));
+        setReportError(data.error || "Failed to generate report. Please complete some assessment questions first.");
         setGenerating(null);
         return;
       }
@@ -69,7 +72,7 @@ export default function ReportsPage() {
       a.click();
       URL.revokeObjectURL(url);
     } catch {
-      alert("Error generating report. Please try again.");
+      setReportError("Error generating report. Please try again.");
     }
 
     setGenerating(null);
@@ -98,6 +101,12 @@ export default function ReportsPage() {
             Generate professional, audit-ready compliance reports as PDF documents.
           </p>
         </div>
+
+        {reportError && (
+          <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg p-4 mb-6">
+            {reportError}
+          </div>
+        )}
 
         <div className="grid md:grid-cols-2 gap-5">
           {REPORT_TYPES.map((report) => (
