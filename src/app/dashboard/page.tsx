@@ -5,7 +5,7 @@ import { ScoreCard } from "@/components/ScoreCard";
 import { ScoreChart } from "@/components/ScoreChart";
 import { DomainProgress } from "@/components/DomainProgress";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { ClipboardCheck, FileText, Upload, ArrowRight, CheckCircle2, AlertTriangle, XCircle, BarChart3 } from "lucide-react";
+import { ClipboardCheck, FileText, Upload, ArrowRight, CheckCircle2, AlertTriangle, XCircle, BarChart3, Sparkles } from "lucide-react";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -91,99 +91,114 @@ export default async function DashboardPage() {
   });
 
   const statusLabel = score >= 80 ? "On Track" : score >= 50 ? "In Progress" : answered > 0 ? "Needs Attention" : "Not Started";
-  const statusColor = score >= 80 ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" : score >= 50 ? "text-amber-400 bg-amber-500/10 border-amber-500/20" : answered > 0 ? "text-red-400 bg-red-500/10 border-red-500/20" : "text-slate-400 bg-slate-500/10 border-slate-500/20";
+  const statusDotColor = score >= 80 ? "text-emerald-400" : score >= 50 ? "text-amber-400" : answered > 0 ? "text-red-400" : "text-slate-400";
 
   return (
     <DashboardLayout userEmail={user.email || ""} orgName={orgName}>
       <div className="p-8 max-w-6xl mx-auto">
 
-        {/* Page Header */}
-        <div className="flex items-start justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-white mb-2">Compliance Dashboard</h1>
-            <div className="flex items-center gap-3">
-              <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border ${statusColor}`}>
-                <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                {statusLabel}
-              </span>
-              <span className="text-slate-500 text-sm">CMMC Level {assessment?.target_level} · {answered}/{totalCount} controls answered</span>
-            </div>
-          </div>
-          <Link
-            href="/assessment"
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-blue-500/20"
-          >
-            Continue Assessment
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        {/* Assessment progress strip */}
-        {answered > 0 && (
-          <div className="mb-8 card-lift p-4 flex items-center gap-4">
-            <div className="flex-1">
-              <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                <span className="font-medium">Assessment Progress</span>
-                <span>{answered} of {totalCount} answered ({progressPct}%)</span>
+        {/* Hero Header — mesh gradient with status */}
+        <div className="mesh-hero p-8 mb-6">
+          <div className="relative z-10 flex items-start justify-between gap-6 flex-wrap">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 text-slate-300">
+                  <span className={`relative w-1.5 h-1.5 rounded-full bg-current pulse-dot ${statusDotColor}`} />
+                  <span className="ml-1">{statusLabel}</span>
+                </div>
+                <span className="text-xs text-slate-400">CMMC Level {assessment?.target_level}</span>
               </div>
-              <div className="w-full bg-slate-800 rounded-full h-2">
+              <h1 className="text-3xl font-bold text-white tracking-tight mb-2">
+                Welcome back,{" "}
+                <span className="gradient-text-blue">{orgName}</span>
+              </h1>
+              <p className="text-slate-400 text-sm">
+                {answered > 0
+                  ? `You've answered ${answered} of ${totalCount} controls · ${progressPct}% complete`
+                  : `Let's start your CMMC Level ${assessment?.target_level} assessment — ${totalCount} controls to review`}
+              </p>
+            </div>
+            <Link
+              href="/assessment"
+              className="shine-hover flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-[1.02]"
+            >
+              <Sparkles className="w-4 h-4" />
+              {answered > 0 ? "Continue Assessment" : "Start Assessment"}
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Progress rail inside hero */}
+          {answered > 0 && (
+            <div className="relative z-10 mt-6 pt-5 border-t border-white/10">
+              <div className="flex items-center justify-between text-xs text-slate-300 mb-2">
+                <span className="font-medium">Assessment Progress</span>
+                <span className="font-mono text-slate-400">{answered}/{totalCount}</span>
+              </div>
+              <div className="relative w-full bg-black/30 rounded-full h-1.5 overflow-hidden">
                 <div
-                  className="h-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-700"
+                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 transition-all duration-700 shadow-[0_0_12px_rgba(99,102,241,0.6)]"
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
             </div>
-            <div className="text-right shrink-0">
-              <p className="text-blue-400 font-bold text-lg">{progressPct}%</p>
-              <p className="text-slate-500 text-xs">Complete</p>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Top Row: Chart + Score Cards */}
+        {/* Bento Grid — Score donut (left, tall) + stat tiles (right, 2x2) */}
         <div className="grid lg:grid-cols-3 gap-5 mb-6">
-          {/* Score Donut Card */}
-          <div className="lg:row-span-2 card-lift p-6">
-            <p className="text-slate-400 text-sm font-medium mb-5">Overall Readiness</p>
-            <ScoreChart
-              score={score}
-              met={met.length}
-              notMet={notMet.length}
-              partial={partial.length}
-              notAssessed={notAssessed}
-            />
-            <div className="grid grid-cols-2 gap-y-3 gap-x-4 mt-6 pt-5" style={{ borderTop: "1px solid rgba(99,120,255,0.08)" }}>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
-                <span className="text-xs text-slate-400">Met <span className="text-white font-medium">({met.length})</span></span>
+          {/* Score Donut — conic animated border hero card */}
+          <div className="lg:row-span-2 conic-border">
+            <div className="p-6 h-full flex flex-col">
+              <div className="flex items-center justify-between mb-5">
+                <p className="text-slate-400 text-sm font-medium">Overall Readiness</p>
+                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider px-2 py-0.5 rounded bg-white/5">Live</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0" />
-                <span className="text-xs text-slate-400">Not Met <span className="text-white font-medium">({notMet.length})</span></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
-                <span className="text-xs text-slate-400">Partial <span className="text-white font-medium">({partial.length})</span></span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-slate-700 shrink-0" />
-                <span className="text-xs text-slate-400">Pending <span className="text-white font-medium">({notAssessed})</span></span>
+              <ScoreChart
+                score={score}
+                met={met.length}
+                notMet={notMet.length}
+                partial={partial.length}
+                notAssessed={notAssessed}
+              />
+              <div className="grid grid-cols-2 gap-y-3 gap-x-4 mt-6 pt-5 border-t border-white/5">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)] shrink-0" />
+                  <span className="text-xs text-slate-400">Met <span className="text-white font-medium tabular-nums">({met.length})</span></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.6)] shrink-0" />
+                  <span className="text-xs text-slate-400">Gaps <span className="text-white font-medium tabular-nums">({notMet.length})</span></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)] shrink-0" />
+                  <span className="text-xs text-slate-400">Partial <span className="text-white font-medium tabular-nums">({partial.length})</span></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-slate-600 shrink-0" />
+                  <span className="text-xs text-slate-400">Pending <span className="text-white font-medium tabular-nums">({notAssessed})</span></span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Score Cards */}
+          {/* Score stat tiles */}
           <ScoreCard title="Controls Met" value={`${met.length}/${totalCount}`} color="success" icon={CheckCircle2} />
           <ScoreCard title="Gaps Found" value={`${notMet.length}`} color="danger" icon={XCircle} />
           <ScoreCard title="Partially Met" value={`${partial.length}`} color="warning" icon={AlertTriangle} />
           <ScoreCard title="Readiness Score" value={`${score}%`} color={score >= 80 ? "success" : score >= 50 ? "warning" : "danger"} icon={BarChart3} />
         </div>
 
-        {/* Domain Breakdown */}
-        <div className="card-lift mb-6">
-          <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid rgba(99,120,255,0.08)" }}>
-            <h2 className="font-semibold text-white">Domain Breakdown</h2>
-            <span className="text-xs text-slate-500 bg-slate-800 px-2.5 py-1 rounded-full">14 domains · {totalCount} controls</span>
+        {/* Domain Breakdown — glass card */}
+        <div className="glass-card mb-6">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
+            <div>
+              <h2 className="font-semibold text-white">Domain Breakdown</h2>
+              <p className="text-xs text-slate-500 mt-0.5">14 domains · {totalCount} total controls</p>
+            </div>
+            <span className="text-xs font-mono text-blue-300 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-full">
+              {progressPct}% complete
+            </span>
           </div>
           <div className="p-3">
             {Array.from(domainScores.entries()).map(([id, ds]) => (
@@ -200,36 +215,30 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Quick Actions — 2026 bento with hover shine */}
         <div className="grid md:grid-cols-3 gap-4">
-          <Link href="/assessment" className="group">
-            <div className="h-full card-lift p-5 transition-transform duration-200 hover:scale-[1.01] group-hover:!border-[rgba(59,130,246,0.4)]">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center mb-4 group-hover:bg-blue-500/25 transition-colors">
-                <ClipboardCheck className="w-5 h-5 text-blue-400" />
-              </div>
-              <h3 className="font-semibold text-white mb-1 group-hover:text-blue-400 transition-colors">Continue Assessment</h3>
-              <p className="text-slate-500 text-sm">Answer questions about your security controls</p>
+          <Link href="/assessment" className="group shine-hover glass-card p-5 hover:!border-blue-500/40 hover:scale-[1.02] transition-all">
+            <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center mb-4 border border-blue-500/20 group-hover:border-blue-400/40 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.35)] transition-all">
+              <ClipboardCheck className="w-5 h-5 text-blue-400" />
             </div>
+            <h3 className="font-semibold text-white mb-1 group-hover:text-blue-300 transition-colors">Continue Assessment</h3>
+            <p className="text-slate-400 text-sm">Answer questions about your security controls</p>
           </Link>
 
-          <Link href="/dashboard/evidence" className="group">
-            <div className="h-full card-lift p-5 transition-transform duration-200 hover:scale-[1.01] group-hover:!border-[rgba(16,185,129,0.4)]">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4 group-hover:bg-emerald-500/25 transition-colors">
-                <Upload className="w-5 h-5 text-emerald-400" />
-              </div>
-              <h3 className="font-semibold text-white mb-1 group-hover:text-emerald-400 transition-colors">Upload Evidence</h3>
-              <p className="text-slate-500 text-sm">Attach documentation to your controls</p>
+          <Link href="/dashboard/evidence" className="group shine-hover glass-card p-5 hover:!border-emerald-500/40 hover:scale-[1.02] transition-all">
+            <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center mb-4 border border-emerald-500/20 group-hover:border-emerald-400/40 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.35)] transition-all">
+              <Upload className="w-5 h-5 text-emerald-400" />
             </div>
+            <h3 className="font-semibold text-white mb-1 group-hover:text-emerald-300 transition-colors">Upload Evidence</h3>
+            <p className="text-slate-400 text-sm">Attach documentation to your controls</p>
           </Link>
 
-          <Link href="/dashboard/reports" className="group">
-            <div className="h-full card-lift p-5 transition-transform duration-200 hover:scale-[1.01] group-hover:!border-[rgba(245,158,11,0.4)]">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center mb-4 group-hover:bg-amber-500/25 transition-colors">
-                <FileText className="w-5 h-5 text-amber-400" />
-              </div>
-              <h3 className="font-semibold text-white mb-1 group-hover:text-amber-400 transition-colors">Generate Reports</h3>
-              <p className="text-slate-500 text-sm">Export SSP, POA&M, and audit reports</p>
+          <Link href="/dashboard/reports" className="group shine-hover glass-card p-5 hover:!border-amber-500/40 hover:scale-[1.02] transition-all">
+            <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center mb-4 border border-amber-500/20 group-hover:border-amber-400/40 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.35)] transition-all">
+              <FileText className="w-5 h-5 text-amber-400" />
             </div>
+            <h3 className="font-semibold text-white mb-1 group-hover:text-amber-300 transition-colors">Generate Reports</h3>
+            <p className="text-slate-400 text-sm">Export SSP, POA&M, and audit reports</p>
           </Link>
         </div>
       </div>

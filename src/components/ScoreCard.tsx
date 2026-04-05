@@ -14,45 +14,50 @@ export function ScoreCard({
 }) {
   const config = {
     success: {
-      text: "text-emerald-400",
-      iconBg: "bg-emerald-500/15",
+      gradientText: "gradient-text-emerald",
+      iconBg: "from-emerald-500/20 to-emerald-600/5",
       iconColor: "text-emerald-400",
-      topBorder: "from-emerald-500/60 to-emerald-400/40",
-      glow: "shadow-emerald-500/10",
+      iconBorder: "border-emerald-500/20",
+      stripe: "from-emerald-400 via-emerald-500 to-transparent",
+      glow: "group-hover:shadow-[0_0_24px_rgba(16,185,129,0.25)]",
     },
     warning: {
-      text: "text-amber-400",
-      iconBg: "bg-amber-500/15",
+      gradientText: "gradient-text-amber",
+      iconBg: "from-amber-500/20 to-amber-600/5",
       iconColor: "text-amber-400",
-      topBorder: "from-amber-500/60 to-amber-400/40",
-      glow: "shadow-amber-500/10",
+      iconBorder: "border-amber-500/20",
+      stripe: "from-amber-400 via-amber-500 to-transparent",
+      glow: "group-hover:shadow-[0_0_24px_rgba(245,158,11,0.25)]",
     },
     danger: {
-      text: "text-red-400",
-      iconBg: "bg-red-500/15",
+      gradientText: "gradient-text-red",
+      iconBg: "from-red-500/20 to-red-600/5",
       iconColor: "text-red-400",
-      topBorder: "from-red-500/60 to-red-400/40",
-      glow: "shadow-red-500/10",
+      iconBorder: "border-red-500/20",
+      stripe: "from-red-400 via-red-500 to-transparent",
+      glow: "group-hover:shadow-[0_0_24px_rgba(239,68,68,0.25)]",
     },
   }[color];
 
   return (
-    <div className={cn(
-      "relative card-lift p-5 overflow-hidden",
-      "shadow-lg", config.glow
-    )}>
-      {/* Colored top stripe */}
-      <div className={cn("absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r", config.topBorder)} />
+    <div className={cn("group relative glass-card p-5 overflow-hidden transition-all duration-300 hover:-translate-y-0.5", config.glow)}>
+      {/* Accent stripe on top-left */}
+      <div className={cn("absolute top-0 left-0 w-24 h-[2px] bg-gradient-to-r", config.stripe)} />
 
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-slate-400 text-sm">{title}</p>
+      <div className="flex items-start justify-between mb-3">
+        <p className="text-slate-400 text-[11px] font-medium uppercase tracking-wider">{title}</p>
         {Icon && (
-          <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center", config.iconBg)}>
-            <Icon className={cn("w-4.5 h-4.5", config.iconColor)} style={{ width: "18px", height: "18px" }} />
+          <div className={cn(
+            "w-9 h-9 rounded-lg flex items-center justify-center bg-gradient-to-br border transition-all",
+            config.iconBg, config.iconBorder
+          )}>
+            <Icon className={cn("w-4 h-4", config.iconColor)} />
           </div>
         )}
       </div>
-      <p className={cn("text-3xl font-bold tracking-tight animate-count", config.text)}>{value}</p>
+      <p className={cn("text-[2.5rem] leading-none font-bold tracking-tight tabular-nums animate-count", config.gradientText)}>
+        {value}
+      </p>
     </div>
   );
 }
