@@ -6,8 +6,10 @@ import { ScoreChart } from "@/components/ScoreChart";
 import { DomainProgress } from "@/components/DomainProgress";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { ClipboardCheck, FileText, Upload, ArrowRight, CheckCircle2, AlertTriangle, XCircle, BarChart3, Sparkles } from "lucide-react";
+import { requireActiveSubscription } from "@/lib/subscription";
 
 export default async function DashboardPage() {
+  await requireActiveSubscription();
   const supabase = await createClient();
   const {
     data: { user },

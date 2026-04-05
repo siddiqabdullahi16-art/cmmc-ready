@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { AssessmentFlow } from "@/components/AssessmentFlow";
+import { requireActiveSubscription } from "@/lib/subscription";
 
 export default async function AssessmentPage() {
+  await requireActiveSubscription();
   const supabase = await createClient();
   const {
     data: { user },
