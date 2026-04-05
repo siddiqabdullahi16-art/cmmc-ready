@@ -31,31 +31,58 @@ export function DashboardLayout({
     router.push("/");
   }
 
+  const initials = orgName
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
   return (
-    <div className="min-h-screen bg-[var(--background)] flex">
+    <div className="min-h-screen dashboard-bg flex">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-[var(--card-border)] flex flex-col fixed h-full bg-[var(--background)] z-10">
-        <div className="p-6 border-b border-[var(--card-border)]">
-          <Link href="/dashboard" className="text-xl font-bold">
-            <span className="text-[var(--primary)]">CMMC</span>-Ready
+      <aside className="w-64 flex flex-col fixed h-full z-10" style={{ background: "var(--sidebar-bg)", borderRight: "1px solid rgba(99,120,255,0.1)" }}>
+        {/* Logo */}
+        <div className="p-6 pb-4">
+          <Link href="/dashboard" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <span className="text-base font-bold text-white">
+              CMMC<span className="text-blue-400">-Ready</span>
+            </span>
           </Link>
-          <p className="text-xs text-[var(--muted)] mt-1 truncate">{orgName}</p>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
+        {/* Org badge */}
+        <div className="mx-4 mb-4 px-3 py-2.5 rounded-lg" style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.15)" }}>
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-blue-500/30 to-indigo-500/30 flex items-center justify-center shrink-0">
+              <span className="text-xs font-bold text-blue-300">{initials}</span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-white truncate">{orgName}</p>
+              <p className="text-xs text-blue-400/70">CMMC Level 2</p>
+            </div>
+          </div>
+        </div>
+
+        <nav className="flex-1 px-3 space-y-0.5">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                   isActive
-                    ? "bg-[var(--primary)] text-white"
-                    : "text-[var(--muted)] hover:text-white hover:bg-[var(--card)]"
+                    ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/20"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.06]"
                 }`}
               >
-                <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <svg className={`w-4.5 h-4.5 shrink-0 ${isActive ? "text-white" : "text-slate-500"}`} style={{ width: "18px", height: "18px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
                   <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                 </svg>
                 {item.label}
@@ -64,19 +91,28 @@ export function DashboardLayout({
           })}
         </nav>
 
-        <div className="p-4 border-t border-[var(--card-border)]">
-          <p className="text-xs text-[var(--muted)] truncate mb-2">{userEmail}</p>
+        {/* User footer */}
+        <div className="p-4 mt-2" style={{ borderTop: "1px solid rgba(99,120,255,0.08)" }}>
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center shrink-0">
+              <span className="text-xs font-medium text-slate-300">{userEmail[0]?.toUpperCase()}</span>
+            </div>
+            <p className="text-xs text-slate-400 truncate flex-1">{userEmail}</p>
+          </div>
           <button
             onClick={handleLogout}
-            className="w-full text-left text-xs text-[var(--muted)] hover:text-[var(--danger)] transition"
+            className="w-full text-left text-xs text-slate-500 hover:text-red-400 transition-colors flex items-center gap-1.5"
           >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
             Sign Out
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64">
+      <main className="flex-1 ml-64 min-h-screen">
         {children}
       </main>
     </div>

@@ -120,7 +120,7 @@ export default async function DashboardPage() {
 
         {/* Assessment progress strip */}
         {answered > 0 && (
-          <div className="mb-8 rounded-xl p-4 flex items-center gap-4" style={{ background: "#111827", border: "1px solid rgba(99,120,255,0.12)" }}>
+          <div className="mb-8 card-lift p-4 flex items-center gap-4">
             <div className="flex-1">
               <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
                 <span className="font-medium">Assessment Progress</span>
@@ -143,7 +143,7 @@ export default async function DashboardPage() {
         {/* Top Row: Chart + Score Cards */}
         <div className="grid lg:grid-cols-3 gap-5 mb-6">
           {/* Score Donut Card */}
-          <div className="lg:row-span-2 rounded-xl p-6" style={{ background: "#111827", border: "1px solid rgba(99,120,255,0.12)" }}>
+          <div className="lg:row-span-2 card-lift p-6">
             <p className="text-slate-400 text-sm font-medium mb-5">Overall Readiness</p>
             <ScoreChart
               score={score}
@@ -180,7 +180,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Domain Breakdown */}
-        <div className="rounded-xl mb-6" style={{ background: "#111827", border: "1px solid rgba(99,120,255,0.12)" }}>
+        <div className="card-lift mb-6">
           <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid rgba(99,120,255,0.08)" }}>
             <h2 className="font-semibold text-white">Domain Breakdown</h2>
             <span className="text-xs text-slate-500 bg-slate-800 px-2.5 py-1 rounded-full">14 domains · {totalCount} controls</span>
@@ -203,7 +203,7 @@ export default async function DashboardPage() {
         {/* Quick Actions */}
         <div className="grid md:grid-cols-3 gap-4">
           <Link href="/assessment" className="group">
-            <div className="h-full rounded-xl p-5 transition-all duration-200 hover:scale-[1.01] border border-[rgba(99,120,255,0.12)] group-hover:border-[rgba(59,130,246,0.35)] bg-[#111827]">
+            <div className="h-full card-lift p-5 transition-transform duration-200 hover:scale-[1.01] group-hover:!border-[rgba(59,130,246,0.4)]">
               <div className="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center mb-4 group-hover:bg-blue-500/25 transition-colors">
                 <ClipboardCheck className="w-5 h-5 text-blue-400" />
               </div>
@@ -213,7 +213,7 @@ export default async function DashboardPage() {
           </Link>
 
           <Link href="/dashboard/evidence" className="group">
-            <div className="h-full rounded-xl p-5 transition-all duration-200 hover:scale-[1.01] border border-[rgba(99,120,255,0.12)] group-hover:border-[rgba(16,185,129,0.35)] bg-[#111827]">
+            <div className="h-full card-lift p-5 transition-transform duration-200 hover:scale-[1.01] group-hover:!border-[rgba(16,185,129,0.4)]">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center mb-4 group-hover:bg-emerald-500/25 transition-colors">
                 <Upload className="w-5 h-5 text-emerald-400" />
               </div>
@@ -223,7 +223,7 @@ export default async function DashboardPage() {
           </Link>
 
           <Link href="/dashboard/reports" className="group">
-            <div className="h-full rounded-xl p-5 transition-all duration-200 hover:scale-[1.01] border border-[rgba(99,120,255,0.12)] group-hover:border-[rgba(245,158,11,0.35)] bg-[#111827]">
+            <div className="h-full card-lift p-5 transition-transform duration-200 hover:scale-[1.01] group-hover:!border-[rgba(245,158,11,0.4)]">
               <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center mb-4 group-hover:bg-amber-500/25 transition-colors">
                 <FileText className="w-5 h-5 text-amber-400" />
               </div>

@@ -3,15 +3,91 @@
 @tailwind utilities;
 
 :root {
-  --background: #09090b;
-  --foreground: #fafafa;
+  /* Base palette — lifted, richer */
+  --background: #0a0e1a;
+  --background-elevated: #0f1524;
+  --foreground: #e8ecf5;
+  --foreground-muted: #94a3b8;
+
+  /* Sidebar — slightly deeper for visual separation */
+  --sidebar-bg: #0c1122;
+  --sidebar-border: rgba(148, 163, 217, 0.08);
+
+  /* Cards — meaningfully lifted, with hover state */
+  --card-bg: #161d2e;
+  --card-bg-hover: #1c2540;
+  --card-border: rgba(148, 163, 217, 0.09);
+  --card-border-hover: rgba(99, 120, 255, 0.3);
+
+  /* Accent */
+  --accent-blue: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.15);
 }
 
-body {
+html, body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+}
+
+/* Global ambient background — richer multi-layer gradient */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 1000px 600px at 15% -10%, rgba(59, 130, 246, 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 900px 500px at 90% 10%, rgba(139, 92, 246, 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 1200px 700px at 50% 110%, rgba(16, 185, 129, 0.06) 0%, transparent 55%);
+}
+
+/* Subtle noise texture for premium feel */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Dashboard background — extra ambient glow contained to the dashboard area */
+.dashboard-bg {
+  position: relative;
+  background:
+    radial-gradient(ellipse 700px 400px at 25% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 600px 400px at 100% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%);
+}
+
+/* Lifted card surface — use this utility for all cards */
+.card-lift {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  position: relative;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.card-lift::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  border-radius: 0.75rem 0.75rem 0 0;
+  pointer-events: none;
+}
+
+.card-lift:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--card-border-hover);
 }
 
 /* Animated gradient */
