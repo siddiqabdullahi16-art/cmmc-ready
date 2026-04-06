@@ -25,11 +25,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const origin = request.headers.get("origin") || "https://cmmcready.pro";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cmmcready.pro";
 
   const session = await getStripe().billingPortal.sessions.create({
     customer: sub.stripeCustomerId,
-    return_url: `${origin}/dashboard/billing`,
+    return_url: `${siteUrl}/dashboard/billing`,
   });
 
   return NextResponse.json({ url: session.url });
