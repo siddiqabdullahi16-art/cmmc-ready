@@ -100,7 +100,7 @@ export default function SignupPage() {
               </Button>
 
               <div className="space-y-2 pt-2">
-                {["14-day free trial", "No credit card required", "Cancel anytime"].map((text) => (
+                {["14-day free trial", "No charge until day 15", "Cancel anytime"].map((text) => (
                   <div key={text} className="flex items-center gap-2 text-xs text-neutral-500">
                     <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
                     {text}

@@ -102,7 +102,7 @@ export default function PricingPage() {
       <div className="max-w-5xl mx-auto px-6 py-16">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold mb-3">Choose Your Plan</h1>
-          <p className="text-neutral-400">Start with a 14-day free trial. Cancel anytime.</p>
+          <p className="text-neutral-400">Start with a 14-day free trial. No charge until day 15. Cancel anytime.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">

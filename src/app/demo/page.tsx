@@ -97,7 +97,7 @@ export default function DemoPage() {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
-              <p className="text-xs text-neutral-500 mt-3">14-day free trial. No credit card required.</p>
+              <p className="text-xs text-neutral-500 mt-3">14-day free trial. No charge until day 15. Cancel anytime.</p>
             </CardContent>
           </Card>
         </div>

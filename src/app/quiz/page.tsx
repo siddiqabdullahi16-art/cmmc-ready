@@ -151,7 +151,7 @@ export default function QuizPage() {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
-              <p className="text-xs text-neutral-500 mt-2">14-day free trial. No credit card.</p>
+              <p className="text-xs text-neutral-500 mt-2">14-day free trial. No charge until day 15.</p>
             </CardContent>
           </Card>
         </div>
