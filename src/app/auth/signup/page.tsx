@@ -49,7 +49,7 @@ export default function SignupPage() {
               <span className="text-blue-500">CMMC</span>-Ready
             </span>
           </Link>
-          <p className="text-neutral-400 mt-2">Start your 14-day free trial</p>
+          <p className="text-neutral-400 mt-2">Create your account</p>
         </div>
 
         <Card>
