@@ -84,7 +84,7 @@ export default function OnboardingPage() {
       });
     }
 
-    router.push("/dashboard");
+    router.push("/pricing");
     } catch {
       setLoading(false);
     }
@@ -184,21 +184,21 @@ export default function OnboardingPage() {
         {step === 3 && (
           <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-8 text-center">
             <div className="text-4xl mb-4">🚀</div>
-            <h2 className="text-xl font-bold mb-2">You&apos;re all set!</h2>
+            <h2 className="text-xl font-bold mb-2">Almost there!</h2>
             <p className="text-[var(--muted)] text-sm mb-2">
               <strong>{orgName}</strong> — CMMC Level {targetLevel}
             </p>
             <p className="text-[var(--muted)] text-sm mb-6">
               We&apos;ll create your assessment with{" "}
               {LEVELS.find((l) => l.level === targetLevel)?.controls} controls.
-              You can start answering questions right away.
+              Next, choose a plan to activate your 14-day free trial.
             </p>
             <button
               onClick={handleComplete}
               disabled={loading}
               className="w-full bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white py-3 rounded-lg transition disabled:opacity-50 mb-3"
             >
-              {loading ? "Setting up..." : "Start My Assessment"}
+              {loading ? "Setting up..." : "Choose Plan & Start Trial"}
             </button>
             <button
               onClick={() => setStep(2)}
