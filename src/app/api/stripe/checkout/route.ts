@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
     metadata: { user_id: user.id },
     allow_promotion_codes: true,
     subscription_data: { trial_period_days: 14 },
+    payment_method_collection: "always",
   };
 
   const session = await getStripe().checkout.sessions.create(
