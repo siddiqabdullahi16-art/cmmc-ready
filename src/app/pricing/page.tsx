@@ -127,14 +127,20 @@ export default function PricingPage() {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  className="w-full"
-                  variant={tier.highlighted ? "default" : "secondary"}
-                  disabled={loading !== null}
-                  onClick={() => handleCheckout(tier.planKey)}
-                >
-                  {loading === tier.planKey ? "Redirecting..." : "Start Free Trial"}
-                </Button>
+                {tier.planKey === "enterprise" ? (
+                  <Button className="w-full" variant="secondary" asChild>
+                    <Link href="/contact">Contact Sales</Link>
+                  </Button>
+                ) : (
+                  <Button
+                    className="w-full"
+                    variant={tier.highlighted ? "default" : "secondary"}
+                    disabled={loading !== null}
+                    onClick={() => handleCheckout(tier.planKey)}
+                  >
+                    {loading === tier.planKey ? "Redirecting..." : "Start Free Trial"}
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}

@@ -90,8 +90,8 @@ export default function SignupPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={8}
-                  placeholder="Min 8 characters"
+                  minLength={12}
+                  placeholder="Min 12 characters"
                 />
               </div>
 

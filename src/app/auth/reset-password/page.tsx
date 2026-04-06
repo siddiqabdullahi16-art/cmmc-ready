@@ -75,8 +75,8 @@ export default function ResetPasswordPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={8}
-                  placeholder="Min 8 characters"
+                  minLength={12}
+                  placeholder="Min 12 characters"
                 />
               </div>
 
@@ -87,7 +87,7 @@ export default function ResetPasswordPage() {
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   required
-                  minLength={8}
+                  minLength={12}
                   placeholder="Confirm your password"
                 />
               </div>
