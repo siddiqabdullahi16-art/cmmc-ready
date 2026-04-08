@@ -134,7 +134,7 @@ const stats = [
   { value: "300K+", label: "Defense Contractors Need CMMC" },
   { value: "110", label: "Level 2 Controls Covered" },
   { value: "14", label: "Security Domains" },
-  { value: "< 1hr", label: "To Complete Assessment" },
+  { value: "2-3 hrs", label: "To Complete Assessment" },
 ];
 
 export default function LandingPage() {
