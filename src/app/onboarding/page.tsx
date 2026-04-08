@@ -31,61 +31,92 @@ export default function OnboardingPage() {
   const [orgName, setOrgName] = useState("");
   const [targetLevel, setTargetLevel] = useState(2);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   async function handleComplete() {
     setLoading(true);
+    setError("");
+
     try {
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-    if (!user) { setLoading(false); return; }
+      if (!user) {
+        setError("You must be logged in. Please sign in and try again.");
+        setLoading(false);
+        return;
+      }
 
-    // Check if org already exists for this user
-    const { data: existing } = await supabase
-      .from("org_members")
-      .select("org_id")
-      .eq("user_id", user.id)
-      .single();
-
-    let orgId = existing?.org_id;
-
-    if (!orgId) {
-      // Create org
-      const { data: org } = await supabase
-        .from("organizations")
-        .insert({ name: orgName || "My Organization" })
-        .select()
+      // Check if org already exists for this user
+      const { data: existing } = await supabase
+        .from("org_members")
+        .select("org_id")
+        .eq("user_id", user.id)
         .single();
 
-      if (org) {
-        orgId = org.id;
-        await supabase.from("org_members").insert({
-          org_id: org.id,
-          user_id: user.id,
-          role: "owner",
-        });
+      let orgId = existing?.org_id;
+
+      if (!orgId) {
+        // Create org
+        const { data: org, error: orgError } = await supabase
+          .from("organizations")
+          .insert({ name: orgName || "My Organization" })
+          .select()
+          .single();
+
+        if (orgError) {
+          setError("Failed to create organization. Please try again.");
+          setLoading(false);
+          return;
+        }
+
+        if (org) {
+          orgId = org.id;
+          const { error: memberError } = await supabase.from("org_members").insert({
+            org_id: org.id,
+            user_id: user.id,
+            role: "owner",
+          });
+
+          if (memberError) {
+            setError("Failed to set up your membership. Please try again.");
+            setLoading(false);
+            return;
+          }
+        }
+      } else if (orgName) {
+        await supabase
+          .from("organizations")
+          .update({ name: orgName })
+          .eq("id", orgId);
       }
-    } else if (orgName) {
-      await supabase
-        .from("organizations")
-        .update({ name: orgName })
-        .eq("id", orgId);
-    }
 
-    if (orgId) {
-      // Create first assessment
-      await supabase.from("assessments").insert({
-        org_id: orgId,
-        name: `CMMC Level ${targetLevel} Assessment`,
-        target_level: targetLevel,
-      });
-    }
+      if (orgId) {
+        // Check if assessment already exists (avoid duplicates)
+        const { data: existingAssessment } = await supabase
+          .from("assessments")
+          .select("id")
+          .eq("org_id", orgId)
+          .eq("status", "in_progress")
+          .limit(1)
+          .single();
 
-    router.push("/pricing");
-    } catch {
+        if (!existingAssessment) {
+          await supabase.from("assessments").insert({
+            org_id: orgId,
+            name: `CMMC Level ${targetLevel} Assessment`,
+            target_level: targetLevel,
+          });
+        }
+      }
+
+      window.location.href = "/pricing";
+    } catch (err) {
+      console.error("Onboarding error:", err);
+      setError("Something went wrong. Please try again.");
       setLoading(false);
     }
   }
@@ -193,6 +224,11 @@ export default function OnboardingPage() {
               {LEVELS.find((l) => l.level === targetLevel)?.controls} controls.
               Next, choose a plan to activate your 14-day free trial.
             </p>
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg p-3 mb-4">
+                {error}
+              </div>
+            )}
             <button
               onClick={handleComplete}
               disabled={loading}
