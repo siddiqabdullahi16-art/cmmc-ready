@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://cmmcready.pro";
-
 export async function POST(request: NextRequest) {
   const body = await request.text();
   const signature = request.headers.get("stripe-signature");

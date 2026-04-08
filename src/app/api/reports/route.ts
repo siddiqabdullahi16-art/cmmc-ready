@@ -5,8 +5,14 @@ import React from "react";
 import { SSPReport } from "@/lib/reports/ssp-report";
 import { POAMReport } from "@/lib/reports/poam-report";
 import { rateLimit } from "@/lib/rate-limit";
+import { getSubscription } from "@/lib/subscription";
 
 export async function POST(request: NextRequest) {
+  // Subscription gate — prevent direct API calls from lapsed users
+  const sub = await getSubscription();
+  if (!sub || (!sub.hasAccess && !sub.inGrace)) {
+    return NextResponse.json({ error: "Active subscription required" }, { status: 403 });
+  }
   const ip = request.headers.get("x-forwarded-for") || "unknown";
   const { success, remaining } = rateLimit(`reports:${ip}`, 10, 60_000);
   if (!success) {

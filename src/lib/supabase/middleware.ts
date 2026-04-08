@@ -40,8 +40,13 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect logged-in users away from auth pages
-  if (user && request.nextUrl.pathname.startsWith("/auth")) {
+  // Redirect logged-in users away from auth pages (except invite acceptance)
+  if (
+    user &&
+    request.nextUrl.pathname.startsWith("/auth") &&
+    !request.nextUrl.pathname.startsWith("/auth/invite") &&
+    !request.nextUrl.pathname.startsWith("/auth/reset-password")
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
