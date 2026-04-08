@@ -15,6 +15,7 @@ export default function SignupPage() {
   const [orgName, setOrgName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [confirmEmail, setConfirmEmail] = useState(false);
   const router = useRouter();
 
   async function handleSignup(e: React.FormEvent) {
@@ -23,7 +24,7 @@ export default function SignupPage() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { org_name: orgName } },
@@ -34,7 +35,16 @@ export default function SignupPage() {
       setLoading(false);
       return;
     }
-    router.push("/onboarding");
+
+    // If session exists, email auto-confirmed — go straight to onboarding
+    if (data.session) {
+      router.push("/onboarding");
+      return;
+    }
+
+    // No session = email confirmation required
+    setConfirmEmail(true);
+    setLoading(false);
   }
 
   return (
@@ -52,7 +62,32 @@ export default function SignupPage() {
           <p className="text-neutral-400 mt-2">Create your account</p>
         </div>
 
-        <Card>
+        {confirmEmail ? (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <div className="w-14 h-14 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">Check your email</h2>
+              <p className="text-neutral-400 text-sm mb-1">
+                We sent a confirmation link to
+              </p>
+              <p className="text-white font-medium mb-4">{email}</p>
+              <p className="text-neutral-500 text-xs mb-6">
+                Click the link in the email to confirm your account, then come back and sign in.
+              </p>
+              <Link
+                href="/auth/login"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors"
+              >
+                Go to Sign In
+              </Link>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
           <CardContent className="p-8">
             <form onSubmit={handleSignup} className="space-y-4">
               {error && (
@@ -117,6 +152,7 @@ export default function SignupPage() {
             </form>
           </CardContent>
         </Card>
+        )}
       </div>
     </div>
   );
